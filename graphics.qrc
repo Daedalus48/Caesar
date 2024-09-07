@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>caesar_background.png</file>
+        <file>background_low_res.png</file>
+    </qresource>
+</RCC>
