@@ -6,8 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    qInfo() << "Current working directory:" << QDir::currentPath();
-    a.setStyleSheet("QWidget {background-image: url(./../caesar_background.png) }");
+    a.setStyleSheet("QWidget {background-image: url(/home/endredi/Caesar/caesar_background.png) }");
     Caesar w;
     w.resize(832, 478);
     w.show();

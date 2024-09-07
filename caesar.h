@@ -23,18 +23,20 @@ public:
     };
 
 protected:
-    void caesarEncrypt(bool decrypt = false);
-    uint incrementVal(uint val, const uint min_val, const uint max_val, int increment);
+    void    caesarEncrypt(bool decrypt = false);
+    uint    incrementVal(uint val, const uint min_val, const uint max_val, int increment);
     wchar_t incrementChar(wchar_t letter, int increment);
+    uint    wchar2uint(wchar_t ch);
+    wchar_t uint2wchar(uint val);
 
     std::string m_text_file_name;
-    const std::string m_text_file_location = "/home/endredi/Caesar/";
-    Language m_language = British;
-    int m_char_increment = 1;
-    uint m_a_val = 'a';
-    uint m_z_val = 'z';
-    uint m_A_val = 'A';
-    uint m_Z_val = 'Z';
+    std::string m_text_file_location = "/home/endredi/Caesar/";
+    Language    m_language = British;
+    int         m_char_increment = 1;
+    uint        m_a_val = 'a';
+    uint        m_z_val = 'z';
+    uint        m_A_val = 'A';
+    uint        m_Z_val = 'Z';
 
 private slots:
     void on_pushButton_Encrypt_clicked();
