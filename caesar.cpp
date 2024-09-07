@@ -28,9 +28,7 @@ Caesar::~Caesar()
 void Caesar::caesarEncrypt(bool decrypt)
 {
     // DEBUG
-    m_text_file_name = "some_text"; // TODO: get from input
-    m_language = Norwegian;         // TODO: get from input
-    m_char_increment = 2;         // TODO: get from input
+    m_language = Norwegian; // TODO: get from input
 
     /// open input file
     std::string input_file = m_text_file_location + m_text_file_name + ".txt";
@@ -80,10 +78,6 @@ void Caesar::caesarEncrypt(bool decrypt)
     fin.get(letter);
     while (!fin.eof())
     {
-        //letter_val = letter;
-        //qInfo() << "letter =" << letter << ", val =" << letter_val;
-
-
         fout << incrementChar(letter, increment);
         fin.get(letter);
     }
@@ -223,9 +217,36 @@ void Caesar::on_pushButton_Decrypt_clicked()
     caesarEncrypt(true);
 }
 
+void Caesar::on_fileName_editingFinished()
+{
+    std::string new_file_name = ui->fileName->text().toStdString();
+
+    // TODO: check if valid
+
+    m_text_file_name = new_file_name;
+}
+
+void Caesar::on_fileLocation_editingFinished()
+{
+    std::string new_file_location = ui->fileLocation->text().toStdString();
+
+    // TODO: check if valid
+
+    m_text_file_location = new_file_location;
+}
+
+void Caesar::on_increment_valueChanged(int new_increment)
+{
+    if (!std::isfinite(new_increment))
+    {
+        qWarning() << "Invalid Increment input";
+        return;
+    }
+
+    m_char_increment = new_increment;
+}
 
 void Caesar::on_pushButton_Exit_clicked()
 {
     QApplication::quit();
 }
-

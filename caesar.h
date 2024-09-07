@@ -29,7 +29,7 @@ protected:
     uint    wchar2uint(wchar_t ch);
     wchar_t uint2wchar(uint val);
 
-    std::string m_text_file_name;
+    std::string m_text_file_name = "some_text";
     std::string m_text_file_location = "/home/endredi/Caesar/";
     Language    m_language = British;
     int         m_char_increment = 1;
@@ -41,6 +41,9 @@ protected:
 private slots:
     void on_pushButton_Encrypt_clicked();
     void on_pushButton_Decrypt_clicked();
+    void on_fileName_editingFinished();
+    void on_fileLocation_editingFinished();
+    void on_increment_valueChanged(int new_increment);
     void on_pushButton_Exit_clicked();
 
 private:
