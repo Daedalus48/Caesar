@@ -6,10 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyleSheet("QWidget {background-image: url(/home/endredi/Caesar/caesar_background.png) }");
-//    MethodSelector method;
-//    method.resize(832, 478);
-//    method.show();
+    a.setStyleSheet("QWidget {background-image: url(/home/endredi/Caesar/graphics/caesar_background.png) }");
     Caesar caesar;
     caesar.resize(832, 478);
     caesar.show();

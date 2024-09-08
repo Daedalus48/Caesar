@@ -18,6 +18,7 @@ Caesar::Caesar(QWidget *parent)
     , ui(new Ui::Caesar)
 {
     ui->setupUi(this);
+    initialize();
 }
 
 Caesar::~Caesar()
@@ -27,8 +28,8 @@ Caesar::~Caesar()
 
 void Caesar::caesarEncrypt(bool decrypt)
 {
-    // DEBUG
-    m_language = Norwegian; // TODO: get from input
+    // read file name and path from GUI
+    updateFileNameAndPath();
 
     /// open input file
     std::string input_file = m_text_file_location + m_text_file_name + ".txt";
@@ -39,6 +40,7 @@ void Caesar::caesarEncrypt(bool decrypt)
 
     if (fin.fail() || !fin.is_open())
     {
+        writeFileNotFoundToGui();
         qWarning() << "Error: opening input file failed";
         return;
     }
@@ -206,6 +208,44 @@ wchar_t Caesar::uint2wchar(uint val)
     return static_cast<wchar_t>(val);
 }
 
+void Caesar::updateFileNameAndPath()
+{
+    m_text_file_name = ui->fileName->text().toStdString();
+    m_text_file_location = ui->fileLocation->text().toStdString();
+}
+
+void Caesar::writeFileNotFoundToGui()
+{
+    // TODO: add text output lable
+    //ui->title_caesar->setText("Warning");
+    ui->output->setPlainText("Unable to open file. Ensure that the file name and path to file are correct.");
+}
+
+void Caesar::on_method_currentIndexChanged(int index)
+{
+    switch (index) {
+    case M_Caesar:
+        m_encryption_method = M_Caesar;
+        ui->title_caesar->show();
+        ui->title_brutus->hide();
+        ui->generate_key->hide();
+        ui->label_increment->show();
+        ui->increment->show();
+        break;
+    case M_Brutus:
+        m_encryption_method = M_Brutus;
+        ui->title_caesar->hide();
+        ui->title_brutus->show();
+        ui->generate_key->show();
+        ui->label_increment->hide();
+        ui->increment->hide();
+        break;
+    default:
+        qWarning() << "Invalid encryptin method input";
+        return;
+    }
+}
+
 void Caesar::on_pushButton_Encrypt_clicked()
 {
     caesarEncrypt();
@@ -217,22 +257,83 @@ void Caesar::on_pushButton_Decrypt_clicked()
     caesarEncrypt(true);
 }
 
-void Caesar::on_fileName_editingFinished()
+//void Caesar::on_fileName_editingFinished()
+//{
+//    m_text_file_name = ui->fileName->text().toStdString();
+//}
+
+//void Caesar::on_fileLocation_editingFinished()
+//{
+//    m_text_file_location = ui->fileLocation->text().toStdString();
+//}
+
+void Caesar::on_pushButton_LoadFile_clicked()
 {
-    std::string new_file_name = ui->fileName->text().toStdString();
+    // read file name and path from GUI
+    updateFileNameAndPath();
 
-    // TODO: check if valid
+    /// open input file
+    std::string input_file = m_text_file_location + m_text_file_name + ".txt";
 
-    m_text_file_name = new_file_name;
+    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wifstream fin;
+    fin.open(input_file);
+
+    if (fin.fail() || !fin.is_open())
+    {
+        writeFileNotFoundToGui();
+        return;
+    }
+
+    // Set the locale to read UTF-8 encoded input and write UTF-8 encoded output
+    // without this the code can't handle characters larger than 1 byte
+    fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    /// read file, and write encrypted/decrypted text to output
+    ui->output->setPlainText("");
+    ui->output->moveCursor (QTextCursor::End);
+    wchar_t c_text[MAX_INPUT];
+    wchar_t letter;
+    int size = 0;
+    fin.get(letter);
+    while (!fin.eof())
+    {
+        c_text[size] = letter;
+        fin.get(letter);
+        size++;
+
+        if (size == MAX_INPUT)
+        {
+            ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
+            ui->output->moveCursor (QTextCursor::End);
+            size = 0;
+        }
+    }
+    ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
+
+    // close file
+    fin.close();
 }
 
-void Caesar::on_fileLocation_editingFinished()
+void Caesar::on_pushButton_Write2File_clicked()
 {
-    std::string new_file_location = ui->fileLocation->text().toStdString();
+    // read file name and path from GUI
+    updateFileNameAndPath();
+}
 
-    // TODO: check if valid
-
-    m_text_file_location = new_file_location;
+void Caesar::on_language_activated(int index)
+{
+    switch (index) {
+    case British:
+        m_language = British;
+        return;
+    case Norwegian:
+        m_language = Norwegian;
+        return;
+    default:
+        qWarning() << "Invalid language input";
+        return;
+    }
 }
 
 void Caesar::on_increment_valueChanged(int new_increment)
@@ -249,4 +350,12 @@ void Caesar::on_increment_valueChanged(int new_increment)
 void Caesar::on_pushButton_Exit_clicked()
 {
     QApplication::quit();
+}
+
+void Caesar::initialize()
+{
+    on_method_currentIndexChanged(ui->method->currentIndex());
+    on_language_activated(ui->language->currentIndex());
+    on_increment_valueChanged(ui->increment->value());
+    on_pushButton_LoadFile_clicked();
 }

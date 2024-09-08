@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/images">
-        <file>caesar_background.png</file>
-        <file>background_low_res.png</file>
+        <file>graphics/caesar_method_selector.png</file>
+        <file>graphics/caesar_background.png</file>
+        <file>graphics/brutus_background.png</file>
     </qresource>
 </RCC>
