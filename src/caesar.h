@@ -31,33 +31,39 @@ public:
 private:
     void    initialize();
     void    caesarEncrypt(bool decrypt = false);
+    void    brutusEncrypt(bool decrypt = false);
     uint    incrementVal(uint val, const uint min_val, const uint max_val, int increment);
     wchar_t incrementChar(wchar_t letter, int increment);
     uint    wchar2uint(wchar_t ch);
     wchar_t uint2wchar(uint val);
     void    updateFileNameAndPath();
     void    writeFileNotFoundToGui();
+    void    setupCaesarWindow();
+    void    setupBrutusWindow();
+    void    closeMethodSelectorWindow();
 
     Method      m_encryption_method;
     std::string m_text_file_name;
     std::string m_text_file_location;
     Language    m_language;
     int         m_char_increment;
+    std::string m_brutus_key_file_name = "brutus_key";
     uint        m_a_val = 'a';
     uint        m_z_val = 'z';
     uint        m_A_val = 'A';
     uint        m_Z_val = 'Z';
 
 private slots:
+    void on_pushButton_Caesar_clicked();
+    void on_pushButton_Brutus_clicked();
     void on_method_currentIndexChanged(int index);
     void on_pushButton_Encrypt_clicked();
     void on_pushButton_Decrypt_clicked();
-    //void on_fileName_editingFinished();
-    //void on_fileLocation_editingFinished();
     void on_pushButton_LoadFile_clicked();
     void on_pushButton_Write2File_clicked();
     void on_language_activated(int index);
     void on_increment_valueChanged(int new_increment);
+    void on_generate_key_clicked();
     void on_pushButton_Exit_clicked();
 
 private:

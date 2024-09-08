@@ -2,10 +2,12 @@
 #include "./ui_caesar.h"
 #include <cmath>
 #include <QDebug>
+#include <QFile>
 #include <fstream>
 #include <iostream>
 #include <locale>
 #include <codecvt>
+#include <random>
 
 using std::isfinite;
 using std::wifstream;
@@ -154,6 +156,94 @@ uint Caesar::incrementVal(uint val, const uint min_val, const uint max_val, int 
     return val_incremented_offset % n_values + min_val;
 }
 
+void Caesar::brutusEncrypt(bool decrypt)
+{
+    // read file name and path from GUI
+    updateFileNameAndPath();
+
+    /// open input file
+    std::string input_file = m_text_file_location + m_text_file_name + ".txt";
+
+    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wifstream fin;
+    fin.open(input_file);
+
+    if (fin.fail() || !fin.is_open())
+    {
+        writeFileNotFoundToGui();
+        qWarning() << "Error: opening input file failed";
+        return;
+    }
+
+    /// open encryption key
+    std::string key_name = m_text_file_location + m_brutus_key_file_name + ".txt";
+
+    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wifstream fin_key;
+    fin_key.open(key_name);
+
+    if (fin_key.fail() || !fin_key.is_open())
+    {
+        writeFileNotFoundToGui();
+        qWarning() << "Error: opening input file failed";
+        return;
+    }
+
+    /// set output file name depending on encryption/decryption
+    std::string output_file = m_text_file_location + m_text_file_name;
+    if (decrypt)
+    {
+        output_file += "_decrypted.txt";
+    }
+    else
+        output_file += "_encrypted.txt";
+
+
+    /// open output file
+    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wofstream fout;
+    fout.open(output_file);
+
+    if (fout.fail() || !fout.is_open())
+    {
+        qWarning() << "Error: opening output file failed";
+        return;
+    }
+
+    // Set the locale to read UTF-8 encoded input and write UTF-8 encoded output
+    // without this the code can't handle characters larger than 1 byte
+    fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+    fout.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+    fin_key.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    /// read file, and write encrypted/decrypted text to output
+    wchar_t letter;
+    wchar_t key;
+    int increment;
+    uint letter_val;
+    fin.get(letter);
+    fin_key.get(key);
+    while (!fin.eof())
+    {
+        increment = static_cast<int>(key);
+        increment = decrypt ? -increment : increment;
+        fout << incrementChar(letter, increment);
+        fin.get(letter);
+        if (!fin_key.eof())
+            fin_key.get(key);
+    }
+
+    // close files
+    fin.close();
+    fout.close();
+    fin_key.close();
+
+    if (decrypt)
+        qInfo() << "The decrypted text was written to" << QString::fromStdString(output_file);
+    else
+        qInfo() << "The encrypted text was written to" << QString::fromStdString(output_file);
+}
+
 uint Caesar::wchar2uint(wchar_t ch)
 {
     switch (m_language) {
@@ -221,24 +311,81 @@ void Caesar::writeFileNotFoundToGui()
     ui->output->setPlainText("Unable to open file. Ensure that the file name and path to file are correct.");
 }
 
+void Caesar::setupCaesarWindow()
+{
+    this->setStyleSheet("QMainWindow {"
+                        "background-image: url(/home/endredi/Caesar/graphics/caesar_background.png);"
+                        "background-position: center;"
+                        "background-repeat: no-repeat;"
+                        "}");
+
+    m_encryption_method = M_Caesar;
+    ui->generate_key->hide();
+    ui->label_increment->show();
+    ui->increment->show();
+    ui->label_min->show();
+    ui->label_max->show();
+}
+
+void Caesar::setupBrutusWindow()
+{
+    this->setStyleSheet("QMainWindow {"
+                        "background-image: url(/home/endredi/Caesar/graphics/brutus_background.png);"
+                        "background-position: center;"
+                        "background-repeat: no-repeat;"
+                        "}");
+
+    m_encryption_method = M_Brutus;
+    ui->generate_key->show();
+    ui->label_increment->hide();
+    ui->increment->hide();
+    ui->label_min->hide();
+    ui->label_max->hide();
+}
+
+void Caesar::closeMethodSelectorWindow()
+{
+    // hide method selector buttons;
+    ui->pushButton_Caesar->hide();
+    ui->pushButton_Brutus->hide();
+
+    // show stuff that are in both Caesar and Brutus
+    ui->label_method->show();
+    ui->label_file_location->show();
+    ui->label_file_name->show();
+    ui->fileLocation->show();
+    ui->fileName->show();
+    ui->pushButton_LoadFile->show();
+    ui->pushButton_Write2File->show();
+    ui->pushButton_Decrypt->show();
+    ui->pushButton_Encrypt->show();
+    ui->language->show();
+    ui->label_language->show();
+    ui->label_txt->show();
+    ui->method->show();
+    ui->output->show();
+}
+
+void Caesar::on_pushButton_Caesar_clicked()
+{
+    closeMethodSelectorWindow();
+    setupCaesarWindow();
+}
+
+void Caesar::on_pushButton_Brutus_clicked()
+{
+    closeMethodSelectorWindow();
+    setupBrutusWindow();
+}
+
 void Caesar::on_method_currentIndexChanged(int index)
 {
     switch (index) {
     case M_Caesar:
-        m_encryption_method = M_Caesar;
-        ui->title_caesar->show();
-        ui->title_brutus->hide();
-        ui->generate_key->hide();
-        ui->label_increment->show();
-        ui->increment->show();
+        setupCaesarWindow();
         break;
     case M_Brutus:
-        m_encryption_method = M_Brutus;
-        ui->title_caesar->hide();
-        ui->title_brutus->show();
-        ui->generate_key->show();
-        ui->label_increment->hide();
-        ui->increment->hide();
+        setupBrutusWindow();
         break;
     default:
         qWarning() << "Invalid encryptin method input";
@@ -248,24 +395,30 @@ void Caesar::on_method_currentIndexChanged(int index)
 
 void Caesar::on_pushButton_Encrypt_clicked()
 {
-    caesarEncrypt();
+    switch (m_encryption_method) {
+    case M_Brutus:
+        brutusEncrypt();
+        break;
+    case M_Caesar:  // Fallthrough
+    default:
+        caesarEncrypt();
+        break;
+    }
 }
 
 
 void Caesar::on_pushButton_Decrypt_clicked()
 {
-    caesarEncrypt(true);
+    switch (m_encryption_method) {
+    case M_Brutus:
+        brutusEncrypt(true);
+        break;
+    case M_Caesar:  // Fallthrough
+    default:
+        caesarEncrypt(true);
+        break;
+    }
 }
-
-//void Caesar::on_fileName_editingFinished()
-//{
-//    m_text_file_name = ui->fileName->text().toStdString();
-//}
-
-//void Caesar::on_fileLocation_editingFinished()
-//{
-//    m_text_file_location = ui->fileLocation->text().toStdString();
-//}
 
 void Caesar::on_pushButton_LoadFile_clicked()
 {
@@ -319,6 +472,34 @@ void Caesar::on_pushButton_Write2File_clicked()
 {
     // read file name and path from GUI
     updateFileNameAndPath();
+    
+    /// open output file
+    std::string std_output_file = m_text_file_location + m_text_file_name + ".txt";
+    QString q_output_file = QString::fromStdString(std_output_file);
+
+    /// open file
+    wofstream fout;
+    fout.open(std_output_file);
+    if (fout.fail() || !fout.is_open())
+    {
+        qWarning() << "Error: opening output file failed";
+        return;
+    }
+
+    // Set the locale to read UTF-8 encoded input and write UTF-8 encoded output
+    // without this the code can't handle characters larger than 1 byte
+    fout.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    /// read input from GUI and write it to a text file
+    QString input = ui->output->toPlainText();
+    wchar_t letter;
+    for (QChar ch : input)
+    {
+        letter = ch.unicode();
+        fout << letter;
+    }
+
+    fout.close();
 }
 
 void Caesar::on_language_activated(int index)
@@ -347,6 +528,33 @@ void Caesar::on_increment_valueChanged(int new_increment)
     m_char_increment = new_increment;
 }
 
+void Caesar::on_generate_key_clicked()
+{
+    /// open output file
+    std::string brutus_key_file = m_text_file_location + m_brutus_key_file_name + ".txt";
+
+    /// open file
+    wofstream fout;
+    fout.open(brutus_key_file);
+    if (fout.fail() || !fout.is_open())
+    {
+        qWarning() << "Error: opening output file failed";
+        return;
+    }
+
+
+    /// generate random increment values for each letter and write them to the encryption key
+    std::random_device rd;     // Only used once to initialise (seed) engine
+    std::mt19937 rng(rd());    // Random-number engine used (Mersenne-Twister in this case)
+    std::uniform_int_distribution<int> uni(0,28); // Guaranteed unbiased
+    for (int c = 0; c < 1000; c++)
+    {
+        fout << uni(rng);
+    }
+
+    fout.close();
+}
+
 void Caesar::on_pushButton_Exit_clicked()
 {
     QApplication::quit();
@@ -358,4 +566,26 @@ void Caesar::initialize()
     on_language_activated(ui->language->currentIndex());
     on_increment_valueChanged(ui->increment->value());
     on_pushButton_LoadFile_clicked();
+    on_generate_key_clicked();
+
+    // hide everything not part of method selector
+    ui->label_method->hide();
+    ui->label_file_location->hide();
+    ui->label_file_name->hide();
+    ui->fileLocation->hide();
+    ui->fileName->hide();
+    ui->pushButton_LoadFile->hide();
+    ui->pushButton_Write2File->hide();
+    ui->pushButton_Decrypt->hide();
+    ui->pushButton_Encrypt->hide();
+    ui->language->hide();
+    ui->label_language->hide();
+    ui->label_txt->hide();
+    ui->label_increment->hide();
+    ui->increment->hide();
+    ui->method->hide();
+    ui->output->hide();
+    ui->generate_key->hide();
+    ui->label_min->hide();
+    ui->label_max->hide();
 }

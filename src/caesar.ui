@@ -6,34 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>927</width>
-    <height>514</height>
+    <width>1910</width>
+    <height>1057</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Caesar</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="title_caesar">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>50</y>
-      <width>251</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:700;&quot;&gt;Caesar&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_Encrypt">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>200</y>
-      <width>89</width>
-      <height>25</height>
+      <x>980</x>
+      <y>414</y>
+      <width>121</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -43,10 +30,10 @@
    <widget class="QPushButton" name="pushButton_Decrypt">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>230</y>
-      <width>89</width>
-      <height>25</height>
+      <x>980</x>
+      <y>474</y>
+      <width>121</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -56,10 +43,10 @@
    <widget class="QPushButton" name="pushButton_Exit">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>280</y>
-      <width>89</width>
-      <height>25</height>
+      <x>980</x>
+      <y>550</y>
+      <width>121</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -70,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>429</y>
+      <y>959</y>
       <width>331</width>
       <height>25</height>
      </rect>
@@ -83,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>399</y>
+      <y>929</y>
       <width>113</width>
       <height>25</height>
      </rect>
@@ -96,7 +83,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>399</y>
+      <y>929</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -109,7 +96,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>429</y>
+      <y>959</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -122,7 +109,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>400</y>
+      <y>930</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -134,23 +121,23 @@
    <widget class="QLabel" name="label_increment">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>169</y>
-      <width>241</width>
-      <height>31</height>
+      <x>900</x>
+      <y>310</y>
+      <width>81</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Increment (min: -1000, max: 1000):</string>
+     <string>Increment:</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="increment">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>170</y>
-      <width>71</width>
-      <height>31</height>
+      <x>980</x>
+      <y>310</y>
+      <width>121</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="minimum">
@@ -166,10 +153,10 @@
    <widget class="QComboBox" name="language">
     <property name="geometry">
      <rect>
-      <x>104</x>
-      <y>20</y>
-      <width>86</width>
-      <height>25</height>
+      <x>985</x>
+      <y>354</y>
+      <width>111</width>
+      <height>51</height>
      </rect>
     </property>
     <item>
@@ -186,21 +173,21 @@
    <widget class="QLabel" name="label_language">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>71</width>
+      <x>860</x>
+      <y>370</y>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Language:</string>
+     <string>Language of text:</string>
     </property>
    </widget>
    <widget class="QComboBox" name="method">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>320</y>
+      <x>1750</x>
+      <y>950</y>
       <width>86</width>
       <height>25</height>
      </rect>
@@ -222,10 +209,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>350</y>
+      <x>1610</x>
+      <y>950</y>
       <width>151</width>
-      <height>17</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -238,44 +225,36 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>10</y>
+      <x>980</x>
+      <y>300</y>
       <width>121</width>
-      <height>25</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
      <string>Generate key</string>
     </property>
    </widget>
-   <widget class="QLabel" name="title_brutus">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>50</y>
-      <width>251</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:700;&quot;&gt;Brutus&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
    <widget class="QTextEdit" name="output">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>411</width>
-      <height>341</height>
+      <y>170</y>
+      <width>531</width>
+      <height>601</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 700 16pt &quot;Tlwg Typewriter&quot;;
+border:0;
+background-color: rgba(0, 0, 0, 0);</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_LoadFile">
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>400</y>
+      <y>930</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -288,7 +267,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>400</y>
+      <y>930</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -297,13 +276,65 @@
      <string>write to file</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_Caesar">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>410</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Caesar</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Brutus">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>470</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Brutus</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_min">
+    <property name="geometry">
+     <rect>
+      <x>1110</x>
+      <y>310</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min: -1000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_max">
+    <property name="geometry">
+     <rect>
+      <x>1110</x>
+      <y>330</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max: 1000</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>927</width>
+     <width>1910</width>
      <height>22</height>
     </rect>
    </property>

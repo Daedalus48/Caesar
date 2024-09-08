@@ -1,14 +1,16 @@
 #include <QApplication>
-#include <QDir>
-//#include "method_selector.h"
 #include "caesar.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setStyleSheet("QWidget {background-image: url(/home/endredi/Caesar/graphics/caesar_background.png) }");
     Caesar caesar;
-    caesar.resize(832, 478);
+    caesar.resize(1924, 1050);
+    caesar.setStyleSheet("QMainWindow {"
+                         "background-image: url(/home/endredi/Caesar/graphics/caesar_method_selector.png);"
+                         "background-position: center;"
+                         "background-repeat: no-repeat;"
+                         "}");
     caesar.show();
 
     return a.exec();
