@@ -100,6 +100,7 @@ void Caesar::caesarEncrypt(bool decrypt)
         // Output decrypted text to gui
         outputTextFileToGui(output_file);
         ui->output->append("\n\n" + decrypt_msg);
+        setGuiScrollLabel(Decrypted);
     }
     else
     {
@@ -109,6 +110,7 @@ void Caesar::caesarEncrypt(bool decrypt)
         // Output encrypted text to gui
         outputTextFileToGui(output_file);
         ui->output->append("\n\n" + encrypt_msg);
+        setGuiScrollLabel(Encrypted);
     }
 }
 
@@ -329,6 +331,7 @@ void Caesar::writeFileNotFoundToGui()
     // TODO: add text output lable
     //ui->title_caesar->setText("Warning");
     ui->output->setPlainText("Unable to open file. Ensure that the file name and path to file are correct.");
+    setGuiScrollLabel(None);
 }
 
 void Caesar::setupCaesarWindow()
@@ -384,6 +387,7 @@ void Caesar::closeMethodSelectorWindow()
     ui->label_txt->show();
     ui->method->show();
     ui->output->show();
+    setGuiScrollLabel(Original);
 }
 
 void Caesar::outputTextFileToGui(std::string input_file)
@@ -405,7 +409,7 @@ void Caesar::outputTextFileToGui(std::string input_file)
 
     /// read file, and write encrypted/decrypted text to output
     ui->output->setPlainText("");
-    ui->output->moveCursor (QTextCursor::End);
+    ui->output->moveCursor(QTextCursor::End);
     wchar_t c_text[MAX_INPUT];
     wchar_t letter;
     int size = 0;
@@ -419,7 +423,7 @@ void Caesar::outputTextFileToGui(std::string input_file)
         if (size == MAX_INPUT)
         {
             ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
-            ui->output->moveCursor (QTextCursor::End);
+            ui->output->moveCursor(QTextCursor::End);
             size = 0;
         }
     }
@@ -427,6 +431,28 @@ void Caesar::outputTextFileToGui(std::string input_file)
 
     // close file
     fin.close();
+}
+
+void Caesar::setGuiScrollLabel(OutputText label)
+{
+    ui->label_original_text->hide();
+    ui->label_encrypted_text->hide();
+    ui->label_decrypted_text->hide();
+
+    switch (label) {
+    case Original:
+        ui->label_original_text->show();
+        return;
+    case Encrypted:
+        ui->label_encrypted_text->show();
+        return;
+    case Decrypted:
+        ui->label_decrypted_text->show();
+        return;
+    case None:  // Fallthrough
+    default:
+        break;
+    }
 }
 
 void Caesar::on_pushButton_Caesar_clicked()
@@ -492,6 +518,7 @@ void Caesar::on_pushButton_LoadFile_clicked()
 
     std::string input_file = m_text_file_location + m_text_file_name + ".txt";
 
+    setGuiScrollLabel(Original);
     outputTextFileToGui(input_file);
 }
 
@@ -527,6 +554,8 @@ void Caesar::on_pushButton_Write2File_clicked()
     }
 
     fout.close();
+
+    setGuiScrollLabel(Original);
 }
 
 void Caesar::on_language_activated(int index)
@@ -616,4 +645,5 @@ void Caesar::initialize()
     ui->generate_key->hide();
     ui->label_min->hide();
     ui->label_max->hide();
+    setGuiScrollLabel(None);
 }

@@ -24,8 +24,16 @@ public:
 
     enum Language
     {
-        British = 0,
+        British   = 0,
         Norwegian = 1
+    };
+
+    enum OutputText
+    {
+        None      = 0,
+        Original  = 1,
+        Encrypted = 2,
+        Decrypted = 3
     };
 
 private:
@@ -42,6 +50,7 @@ private:
     void    setupBrutusWindow();
     void    closeMethodSelectorWindow();
     void    outputTextFileToGui(std::string input_file);
+    void    setGuiScrollLabel(OutputText label);
 
     Method      m_encryption_method;
     std::string m_text_file_name;
