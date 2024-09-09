@@ -12,6 +12,8 @@
 using std::isfinite;
 using std::wifstream;
 using std::wofstream;
+using std::ifstream;
+using std::ofstream;
 using std::ios;
 using std::codecvt_utf8;
 
@@ -179,7 +181,7 @@ void Caesar::brutusEncrypt(bool decrypt)
     std::string key_name = m_text_file_location + m_brutus_key_file_name + ".txt";
 
     // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
-    wifstream fin_key;
+    ifstream fin_key;
     fin_key.open(key_name);
 
     if (fin_key.fail() || !fin_key.is_open())
@@ -214,23 +216,27 @@ void Caesar::brutusEncrypt(bool decrypt)
     // without this the code can't handle characters larger than 1 byte
     fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
     fout.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
-    fin_key.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
 
     /// read file, and write encrypted/decrypted text to output
     wchar_t letter;
-    wchar_t key;
+    int key;
     int increment;
     uint letter_val;
     fin.get(letter);
-    fin_key.get(key);
     while (!fin.eof())
     {
+        fin_key >> key;
+        if (fin_key.eof())
+        {
+            // if the end of the encryption key is reached go back to the beginning
+            fin_key.clear();
+            fin_key.seekg(0);
+            fin_key >> key;
+        }
         increment = static_cast<int>(key);
         increment = decrypt ? -increment : increment;
         fout << incrementChar(letter, increment);
         fin.get(letter);
-        if (!fin_key.eof())
-            fin_key.get(key);
     }
 
     // close files
@@ -370,12 +376,14 @@ void Caesar::on_pushButton_Caesar_clicked()
 {
     closeMethodSelectorWindow();
     setupCaesarWindow();
+    ui->method->setCurrentIndex(M_Caesar);
 }
 
 void Caesar::on_pushButton_Brutus_clicked()
 {
     closeMethodSelectorWindow();
     setupBrutusWindow();
+    ui->method->setCurrentIndex(M_Brutus);
 }
 
 void Caesar::on_method_currentIndexChanged(int index)
@@ -534,7 +542,7 @@ void Caesar::on_generate_key_clicked()
     std::string brutus_key_file = m_text_file_location + m_brutus_key_file_name + ".txt";
 
     /// open file
-    wofstream fout;
+    ofstream fout;
     fout.open(brutus_key_file);
     if (fout.fail() || !fout.is_open())
     {
@@ -550,6 +558,7 @@ void Caesar::on_generate_key_clicked()
     for (int c = 0; c < 1000; c++)
     {
         fout << uni(rng);
+        fout << "\n";
     }
 
     fout.close();
