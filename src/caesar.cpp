@@ -92,26 +92,7 @@ void Caesar::caesarEncrypt(bool decrypt)
     fin.close();
     fout.close();
 
-    if (decrypt)
-    {
-        QString decrypt_msg = "The decrypted text was written to" + QString::fromStdString(output_file);
-        qInfo() << decrypt_msg;
-
-        // Output decrypted text to gui
-        outputTextFileToGui(output_file);
-        ui->output->append("\n\n" + decrypt_msg);
-        setGuiScrollLabel(Decrypted);
-    }
-    else
-    {
-        QString encrypt_msg = "The encrypted text was written to" + QString::fromStdString(output_file);
-        qInfo() << encrypt_msg;
-
-        // Output encrypted text to gui
-        outputTextFileToGui(output_file);
-        ui->output->append("\n\n" + encrypt_msg);
-        setGuiScrollLabel(Encrypted);
-    }
+    outputEncryptedFileLocation(output_file, decrypt);
 }
 
 /// Caesar encryption
@@ -260,10 +241,7 @@ void Caesar::brutusEncrypt(bool decrypt)
     fout.close();
     fin_key.close();
 
-    if (decrypt)
-        qInfo() << "The decrypted text was written to" << QString::fromStdString(output_file);
-    else
-        qInfo() << "The encrypted text was written to" << QString::fromStdString(output_file);
+    outputEncryptedFileLocation(output_file, decrypt);
 }
 
 uint Caesar::wchar2uint(wchar_t ch)
@@ -322,8 +300,8 @@ wchar_t Caesar::uint2wchar(uint val)
 
 void Caesar::updateFileNameAndPath()
 {
-    m_text_file_name = ui->fileName->text().toStdString();
-    m_text_file_location = ui->fileLocation->text().toStdString();
+    m_text_file_name = ui->lineEdit_fileName->text().toStdString();
+    m_text_file_location = ui->lineEdit_fileLocation->text().toStdString();
 }
 
 void Caesar::writeFileNotFoundToGui()
@@ -343,7 +321,7 @@ void Caesar::setupCaesarWindow()
                         "}");
 
     m_encryption_method = M_Caesar;
-    ui->generate_key->hide();
+    ui->pushButton_GenerateKey->hide();
     ui->label_increment->show();
     ui->increment->show();
     ui->label_min->show();
@@ -359,7 +337,7 @@ void Caesar::setupBrutusWindow()
                         "}");
 
     m_encryption_method = M_Brutus;
-    ui->generate_key->show();
+    ui->pushButton_GenerateKey->show();
     ui->label_increment->hide();
     ui->increment->hide();
     ui->label_min->hide();
@@ -376,16 +354,16 @@ void Caesar::closeMethodSelectorWindow()
     ui->label_method->show();
     ui->label_file_location->show();
     ui->label_file_name->show();
-    ui->fileLocation->show();
-    ui->fileName->show();
+    ui->lineEdit_fileLocation->show();
+    ui->lineEdit_fileName->show();
     ui->pushButton_LoadFile->show();
     ui->pushButton_Write2File->show();
     ui->pushButton_Decrypt->show();
     ui->pushButton_Encrypt->show();
-    ui->language->show();
+    ui->comboBox_language->show();
     ui->label_language->show();
     ui->label_txt->show();
-    ui->method->show();
+    ui->comboBox_method->show();
     ui->output->show();
     setGuiScrollLabel(Original);
 }
@@ -455,21 +433,45 @@ void Caesar::setGuiScrollLabel(OutputText label)
     }
 }
 
+void Caesar::outputEncryptedFileLocation(std::string output_file, bool decrypt)
+{
+    if (decrypt)
+    {
+        QString decrypt_msg = "The decrypted text was written to" + QString::fromStdString(output_file);
+        qInfo() << decrypt_msg;
+
+        // Output decrypted text to gui
+        outputTextFileToGui(output_file);
+        ui->output->append("\n\n" + decrypt_msg);
+        setGuiScrollLabel(Decrypted);
+    }
+    else
+    {
+        QString encrypt_msg = "The encrypted text was written to" + QString::fromStdString(output_file);
+        qInfo() << encrypt_msg;
+
+        // Output encrypted text to gui
+        outputTextFileToGui(output_file);
+        ui->output->append("\n\n" + encrypt_msg);
+        setGuiScrollLabel(Encrypted);
+    }
+}
+
 void Caesar::on_pushButton_Caesar_clicked()
 {
     closeMethodSelectorWindow();
     setupCaesarWindow();
-    ui->method->setCurrentIndex(M_Caesar);
+    ui->comboBox_method->setCurrentIndex(M_Caesar);
 }
 
 void Caesar::on_pushButton_Brutus_clicked()
 {
     closeMethodSelectorWindow();
     setupBrutusWindow();
-    ui->method->setCurrentIndex(M_Brutus);
+    ui->comboBox_method->setCurrentIndex(M_Brutus);
 }
 
-void Caesar::on_method_currentIndexChanged(int index)
+void Caesar::on_comboBox_method_currentIndexChanged(int index)
 {
     switch (index) {
     case M_Caesar:
@@ -558,7 +560,7 @@ void Caesar::on_pushButton_Write2File_clicked()
     setGuiScrollLabel(Original);
 }
 
-void Caesar::on_language_activated(int index)
+void Caesar::on_comboBox_language_activated(int index)
 {
     switch (index) {
     case British:
@@ -584,7 +586,7 @@ void Caesar::on_increment_valueChanged(int new_increment)
     m_char_increment = new_increment;
 }
 
-void Caesar::on_generate_key_clicked()
+void Caesar::on_pushButton_GenerateKey_clicked()
 {
     /// open output file
     std::string brutus_key_file = m_text_file_location + m_brutus_key_file_name + ".txt";
@@ -619,30 +621,30 @@ void Caesar::on_pushButton_Exit_clicked()
 
 void Caesar::initialize()
 {
-    on_method_currentIndexChanged(ui->method->currentIndex());
-    on_language_activated(ui->language->currentIndex());
+    on_comboBox_method_currentIndexChanged(ui->comboBox_method->currentIndex());
+    on_comboBox_language_activated(ui->comboBox_language->currentIndex());
     on_increment_valueChanged(ui->increment->value());
     on_pushButton_LoadFile_clicked();
-    on_generate_key_clicked();
+    on_pushButton_GenerateKey_clicked();
 
     // hide everything not part of method selector
     ui->label_method->hide();
     ui->label_file_location->hide();
     ui->label_file_name->hide();
-    ui->fileLocation->hide();
-    ui->fileName->hide();
+    ui->lineEdit_fileLocation->hide();
+    ui->lineEdit_fileName->hide();
     ui->pushButton_LoadFile->hide();
     ui->pushButton_Write2File->hide();
     ui->pushButton_Decrypt->hide();
     ui->pushButton_Encrypt->hide();
-    ui->language->hide();
+    ui->comboBox_language->hide();
     ui->label_language->hide();
     ui->label_txt->hide();
     ui->label_increment->hide();
     ui->increment->hide();
-    ui->method->hide();
+    ui->comboBox_method->hide();
     ui->output->hide();
-    ui->generate_key->hide();
+    ui->pushButton_GenerateKey->hide();
     ui->label_min->hide();
     ui->label_max->hide();
     setGuiScrollLabel(None);

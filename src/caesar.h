@@ -51,6 +51,7 @@ private:
     void    closeMethodSelectorWindow();
     void    outputTextFileToGui(std::string input_file);
     void    setGuiScrollLabel(OutputText label);
+    void    outputEncryptedFileLocation(std::string output_file, bool decrypt);
 
     Method      m_encryption_method;
     std::string m_text_file_name;
@@ -66,14 +67,14 @@ private:
 private slots:
     void on_pushButton_Caesar_clicked();
     void on_pushButton_Brutus_clicked();
-    void on_method_currentIndexChanged(int index);
+    void on_comboBox_method_currentIndexChanged(int index);
     void on_pushButton_Encrypt_clicked();
     void on_pushButton_Decrypt_clicked();
     void on_pushButton_LoadFile_clicked();
     void on_pushButton_Write2File_clicked();
-    void on_language_activated(int index);
+    void on_comboBox_language_activated(int index);
     void on_increment_valueChanged(int new_increment);
-    void on_generate_key_clicked();
+    void on_pushButton_GenerateKey_clicked();
     void on_pushButton_Exit_clicked();
 
 private:
