@@ -93,9 +93,23 @@ void Caesar::caesarEncrypt(bool decrypt)
     fout.close();
 
     if (decrypt)
-        qInfo() << "The decrypted text was written to" << QString::fromStdString(output_file);
+    {
+        QString decrypt_msg = "The decrypted text was written to" + QString::fromStdString(output_file);
+        qInfo() << decrypt_msg;
+
+        // Output decrypted text to gui
+        outputTextFileToGui(output_file);
+        ui->output->append("\n\n" + decrypt_msg);
+    }
     else
-        qInfo() << "The encrypted text was written to" << QString::fromStdString(output_file);
+    {
+        QString encrypt_msg = "The encrypted text was written to" + QString::fromStdString(output_file);
+        qInfo() << encrypt_msg;
+
+        // Output encrypted text to gui
+        outputTextFileToGui(output_file);
+        ui->output->append("\n\n" + encrypt_msg);
+    }
 }
 
 /// Caesar encryption
@@ -372,6 +386,49 @@ void Caesar::closeMethodSelectorWindow()
     ui->output->show();
 }
 
+void Caesar::outputTextFileToGui(std::string input_file)
+{
+    /// open input file
+    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wifstream fin;
+    fin.open(input_file);
+
+    if (fin.fail() || !fin.is_open())
+    {
+        writeFileNotFoundToGui();
+        return;
+    }
+
+    // Set the locale to read UTF-8 encoded input and write UTF-8 encoded output
+    // without this the code can't handle characters larger than 1 byte
+    fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    /// read file, and write encrypted/decrypted text to output
+    ui->output->setPlainText("");
+    ui->output->moveCursor (QTextCursor::End);
+    wchar_t c_text[MAX_INPUT];
+    wchar_t letter;
+    int size = 0;
+    fin.get(letter);
+    while (!fin.eof())
+    {
+        c_text[size] = letter;
+        fin.get(letter);
+        size++;
+
+        if (size == MAX_INPUT)
+        {
+            ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
+            ui->output->moveCursor (QTextCursor::End);
+            size = 0;
+        }
+    }
+    ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
+
+    // close file
+    fin.close();
+}
+
 void Caesar::on_pushButton_Caesar_clicked()
 {
     closeMethodSelectorWindow();
@@ -433,47 +490,9 @@ void Caesar::on_pushButton_LoadFile_clicked()
     // read file name and path from GUI
     updateFileNameAndPath();
 
-    /// open input file
     std::string input_file = m_text_file_location + m_text_file_name + ".txt";
 
-    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
-    wifstream fin;
-    fin.open(input_file);
-
-    if (fin.fail() || !fin.is_open())
-    {
-        writeFileNotFoundToGui();
-        return;
-    }
-
-    // Set the locale to read UTF-8 encoded input and write UTF-8 encoded output
-    // without this the code can't handle characters larger than 1 byte
-    fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
-
-    /// read file, and write encrypted/decrypted text to output
-    ui->output->setPlainText("");
-    ui->output->moveCursor (QTextCursor::End);
-    wchar_t c_text[MAX_INPUT];
-    wchar_t letter;
-    int size = 0;
-    fin.get(letter);
-    while (!fin.eof())
-    {
-        c_text[size] = letter;
-        fin.get(letter);
-        size++;
-
-        if (size == MAX_INPUT)
-        {
-            ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
-            ui->output->moveCursor (QTextCursor::End);
-            size = 0;
-        }
-    }
-    ui->output->insertPlainText(QString::fromWCharArray(c_text, size));
-
-    // close file
-    fin.close();
+    outputTextFileToGui(input_file);
 }
 
 void Caesar::on_pushButton_Write2File_clicked()

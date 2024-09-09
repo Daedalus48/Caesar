@@ -41,6 +41,7 @@ private:
     void    setupCaesarWindow();
     void    setupBrutusWindow();
     void    closeMethodSelectorWindow();
+    void    outputTextFileToGui(std::string input_file);
 
     Method      m_encryption_method;
     std::string m_text_file_name;
