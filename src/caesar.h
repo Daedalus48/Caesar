@@ -52,6 +52,8 @@ private:
     void    outputTextFileToGui(std::string input_file);
     void    setGuiScrollLabel(OutputText label);
     void    outputEncryptedFileLocation(std::string output_file, bool decrypt);
+    void    getIOfilePathAndNames(std::string &input_file, std::string &output_file, bool decrypt);
+    void    getIOfilePathAndNames(std::string &input_file, std::string &output_file, std::string &brutus_key, bool decrypt);
 
     Method      m_encryption_method;
     std::string m_text_file_name;

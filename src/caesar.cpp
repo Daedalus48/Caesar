@@ -35,41 +35,20 @@ void Caesar::caesarEncrypt(bool decrypt)
     // read file name and path from GUI
     updateFileNameAndPath();
 
-    /// open input file
-    std::string input_file = m_text_file_location + m_text_file_name + ".txt";
+    /// open IO files
+    std::string input_file, output_file;
+    getIOfilePathAndNames(input_file, output_file, decrypt);
 
     // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
     wifstream fin;
-    fin.open(input_file);
-
-    if (fin.fail() || !fin.is_open())
-    {
-        writeFileNotFoundToGui();
-        qWarning() << "Error: opening input file failed";
-        return;
-    }
-
-
-    /// set output file name and sign of increment value depending on encryption/decryption
-    int increment = m_char_increment;
-    std::string output_file = m_text_file_location + m_text_file_name;
-    if (decrypt)
-    {
-        output_file += "_decrypted.txt";
-        increment = -increment;
-    }
-    else
-        output_file += "_encrypted.txt";
-
-
-    /// open output file
-    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
     wofstream fout;
+    fin.open(input_file);
     fout.open(output_file);
 
-    if (fout.fail() || !fout.is_open())
+    if (fin.fail() || !fin.is_open() || fout.fail() || !fout.is_open())
     {
-        qWarning() << "Error: opening output file failed";
+        writeFileNotFoundToGui();
+        qWarning() << "Error: opening file failed";
         return;
     }
 
@@ -77,6 +56,9 @@ void Caesar::caesarEncrypt(bool decrypt)
     // without this the code can't handle characters larger than 1 byte
     fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
     fout.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    /// set sign of increment value depending on encryption/decryption
+    int increment = decrypt ? -m_char_increment : m_char_increment;
 
     /// read file, and write encrypted/decrypted text to output
     wchar_t letter;
@@ -160,52 +142,22 @@ void Caesar::brutusEncrypt(bool decrypt)
     // read file name and path from GUI
     updateFileNameAndPath();
 
-    /// open input file
-    std::string input_file = m_text_file_location + m_text_file_name + ".txt";
+    /// open IO files and enkryption key
+    std::string input_file, output_file, key_name;
+    getIOfilePathAndNames(input_file, output_file, key_name, decrypt);
 
     // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
     wifstream fin;
-    fin.open(input_file);
-
-    if (fin.fail() || !fin.is_open())
-    {
-        writeFileNotFoundToGui();
-        qWarning() << "Error: opening input file failed";
-        return;
-    }
-
-    /// open encryption key
-    std::string key_name = m_text_file_location + m_brutus_key_file_name + ".txt";
-
-    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
+    wofstream fout;
     ifstream fin_key;
+    fin.open(input_file);
+    fout.open(output_file);
     fin_key.open(key_name);
 
-    if (fin_key.fail() || !fin_key.is_open())
+    if (fin.fail() || !fin.is_open() || fout.fail() || !fout.is_open() || fin_key.fail() || !fin_key.is_open())
     {
         writeFileNotFoundToGui();
-        qWarning() << "Error: opening input file failed";
-        return;
-    }
-
-    /// set output file name depending on encryption/decryption
-    std::string output_file = m_text_file_location + m_text_file_name;
-    if (decrypt)
-    {
-        output_file += "_decrypted.txt";
-    }
-    else
-        output_file += "_encrypted.txt";
-
-
-    /// open output file
-    // using wifstream instead of ifstream because 'æ', 'ø', 'å' uses 2 bytes and don't fit in a char
-    wofstream fout;
-    fout.open(output_file);
-
-    if (fout.fail() || !fout.is_open())
-    {
-        qWarning() << "Error: opening output file failed";
+        qWarning() << "Error: opening file failed";
         return;
     }
 
@@ -455,6 +407,25 @@ void Caesar::outputEncryptedFileLocation(std::string output_file, bool decrypt)
         ui->output->append("\n\n" + encrypt_msg);
         setGuiScrollLabel(Encrypted);
     }
+}
+
+void Caesar::getIOfilePathAndNames(std::string &input_file, std::string &output_file, bool decrypt)
+{
+    input_file = m_text_file_location + m_text_file_name + ".txt";
+
+    // set output file name depending on encryption/decryption
+    output_file = m_text_file_location + m_text_file_name;
+    if (decrypt)
+        output_file += "_decrypted.txt";
+    else
+        output_file += "_encrypted.txt";
+}
+
+void Caesar::getIOfilePathAndNames(std::string &input_file, std::string &output_file, std::string &brutus_key, bool decrypt)
+{
+    getIOfilePathAndNames(input_file, output_file, decrypt);
+
+    brutus_key = m_text_file_location + m_brutus_key_file_name + ".txt";
 }
 
 void Caesar::on_pushButton_Caesar_clicked()
